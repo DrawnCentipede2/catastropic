@@ -1,0 +1,90 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Claude files
+.Claude/*
+CLAUDE.md
+
+# Serena files
+.serena/*
+.mcp.json
+
+# Vite files
+.vite/*
+
+# Node files
+node_modules/*
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# Vite / Build output
+dist/
+.vite/
+vite.cache/
+
+# TypeScript incremental build info
+*.tsbuildinfo
+
+# Test outputs
+coverage/
+.nyc_output/
+.vitest/
+playwright-report/
+test-results/
+cypress/videos/
+cypress/screenshots/
+
+# Env files (keep an example file committed instead)
+.env
+.env.*
+!.env.example
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Vercel
+.vercel/
+
+# Supabase (ignore local temp artifacts; keep migrations/schema if you use CLI)
+.supabase/
+supabase/.temp/
+supabase/.branches/
+
+# Optional caches/temp
+tmp/
+temp/
