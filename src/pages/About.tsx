@@ -17,9 +17,11 @@ import {
   Globe,
   Star
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 const About = () => {
+  const location = useLocation();
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'AboutPage',
@@ -27,6 +29,21 @@ const About = () => {
     url: `${window.location.origin}/about`,
     description: 'Learn about Catastropic, the community hub for Model Context Protocol servers.',
   };
+
+  // Smooth-scroll to hash anchors (supports SPA navigation)
+  useEffect(() => {
+    const hash = (location.hash || '').replace(/^#/, '');
+    if (!hash) return;
+    const scroll = () => {
+      const el = document.getElementById(decodeURIComponent(hash));
+      if (el && 'scrollIntoView' in el) {
+        (el as HTMLElement).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+    // Delay slightly to ensure content is rendered
+    const t = setTimeout(scroll, 60);
+    return () => clearTimeout(t);
+  }, [location.hash]);
 
   return (
     <main className="container py-10">
@@ -103,7 +120,7 @@ const About = () => {
       <Separator className="mb-16" />
 
       {/* What is MCP Section */}
-      <section className="mb-16">
+      <section className="mb-16 scroll-mt-24" id="what-is-mcp">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-semibold tracking-tight mb-4">What is Model Context Protocol?</h2>
           <p className="text-lg text-muted-foreground max-w-4xl mx-auto">
@@ -115,7 +132,7 @@ const About = () => {
         </div>
         
         {/* History Section */}
-        <div className="mb-12 bg-secondary/30 rounded-xl p-8 border">
+        <div className="mb-12 bg-secondary/30 rounded-xl p-8 border scroll-mt-24" id="mcp-story">
           <h3 className="text-xl font-semibold mb-4 text-center">The Story Behind MCP</h3>
           <div className="max-w-3xl mx-auto text-muted-foreground space-y-4">
             <p>
