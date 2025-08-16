@@ -9,14 +9,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useServers } from "@/hooks/useServers";
 import { Flame, Shield, AlertCircle } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getSupabaseAnon } from "@/lib/supabase";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAuth } from "@/hooks/useAuth";
 
 type Filter = 'all' | 'trending' | 'official';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, login, isLoggingIn } = (useAuth() as any) || {};
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
   const [filter, setFilter] = useState<Filter>('all');
   const [limit, setLimit] = useState(50);
   const [search, setSearch] = useState("");
@@ -215,10 +220,10 @@ const Index = () => {
               Discover Model Context Protocol Servers
             </h1>
             <p className="text-lg text-muted-foreground mt-4">
-              A community hub for MCP servers — explore demos, vote weekly, and monetize your creations.
+              A community hub for <Link to="/about#what-is-mcp" className="underline underline-offset-2">MCP servers</Link> — explore demos, vote weekly, and monetize your creations.
             </p>
             <div className="mt-6 flex gap-3">
-              <Link to="/submit"><Button>Submit your server</Button></Link>
+              <Button onClick={() => { if (isAuthenticated) { navigate('/submit'); } else { setShowLoginDialog(true); } }}>Submit your server</Button>
               <Link to="/leaderboard"><Button variant="secondary">View leaderboard</Button></Link>
             </div>
           </div>
@@ -288,6 +293,23 @@ const Index = () => {
           </div>
         </div>
       </section>
+      {/* Auth dialog for submit-from-home */}
+      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign in required</DialogTitle>
+            <DialogDescription>
+              You need to sign in to submit a server. Continue with GitHub?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>Cancel</Button>
+            <Button onClick={() => { login('github'); }} disabled={isLoggingIn}>
+              {isLoggingIn ? 'Redirecting…' : 'Continue with GitHub'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <Separator />
       <section className="container py-8">
         <div className="flex flex-wrap items-center gap-3 mb-6 justify-between">

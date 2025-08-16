@@ -135,7 +135,7 @@ const Leaderboard = () => {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="p-0 h-auto text-xs">
+                    <Button variant="ghost" size="sm" className="p-0 h-auto text-xs text-orange-500">
                       Show technical explanation
                     </Button>
                   </DialogTrigger>

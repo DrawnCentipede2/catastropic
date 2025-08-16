@@ -2,6 +2,7 @@ import SEO from "@/components/SEO";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Flame, Shield, Star, Github, ThumbsUp, Heart, ChevronLeft, Globe } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useServer } from "@/hooks/useServers";
@@ -33,7 +34,7 @@ const ServerDetail = () => {
   const [showPreview, setShowPreview] = useState(false);
   const readmeRef = useRef<HTMLDivElement | null>(null);
   const [enhancedReadmeHtml, setEnhancedReadmeHtml] = useState<string | null>(null);
-  const { user, profile, isAuthenticated, refreshProfile } = (useAuth() as any) || {};
+  const { user, profile, isAuthenticated, refreshProfile, login, isLoggingIn } = (useAuth() as any) || {};
   const toggleFavoriteMutation = useToggleFavorite();
   const [favSubmitting, setFavSubmitting] = useState(false);
   const [isFavorite, setIsFavorite] = useState<boolean>(() => {
@@ -41,6 +42,7 @@ const ServerDetail = () => {
   });
   const [voteSubmitting, setVoteSubmitting] = useState(false);
   const [voteCount, setVoteCount] = useState<number | null>(null);
+  const [showLoginDialog, setShowLoginDialog] = useState(false);
 
   useEffect(() => {
     // Record a view once per user/device per day
@@ -85,17 +87,14 @@ const ServerDetail = () => {
   const onVote = async () => {
     try {
       if (!server?.id) return;
-      // Simple global throttle: one vote action every 10s per browser
+      // Simple global throttle: allow another vote action after 1s per browser
       const lastTs = Number(localStorage.getItem('mcp_vote_last_ts') || '0');
-      if (Date.now() - lastTs < 10_000) {
-        toast({ title: 'Please wait a moment', description: 'You can vote again in a few seconds.' });
+      if (Date.now() - lastTs < 1_000) {
+        toast({ title: 'Please wait a moment', description: 'You can vote again shortly.' });
         return;
       }
 
-      if (!isAuthenticated || !user?.id) {
-        toast({ title: 'Sign in required', description: 'Please sign in to vote for this server.' });
-        return;
-      }
+      if (!isAuthenticated || !user?.id) { setShowLoginDialog(true); return; }
       if (voteSubmitting) return;
       setVoteSubmitting(true);
       const result = (await serverApi.toggleVote(server.id, user.id)) as any;
@@ -122,10 +121,7 @@ const ServerDetail = () => {
   const toggleFavorite = async () => {
     try {
       if (!server?.id) return;
-      if (!isAuthenticated || !user?.id) {
-        toast({ title: 'Sign in required', description: 'Please sign in to save favorites.' });
-        return;
-      }
+      if (!isAuthenticated || !user?.id) { setShowLoginDialog(true); return; }
       if (favSubmitting) return;
       // Ensure profile (mcp_users row) exists before writing favorites
       let userIdForFavorites = profile?.id as string | undefined;
@@ -410,6 +406,22 @@ const ServerDetail = () => {
 
   return (
     <main className="container py-8">
+      <Dialog open={showLoginDialog} onOpenChange={setShowLoginDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Sign in required</DialogTitle>
+            <DialogDescription>
+              You need to sign in to like or favorite servers. Continue with GitHub?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowLoginDialog(false)}>Cancel</Button>
+            <Button onClick={() => { login('github'); }} disabled={isLoggingIn}>
+              {isLoggingIn ? 'Redirecting…' : 'Continue with GitHub'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       <SEO
         title={server ? `${server.name} — MCP Server` : 'MCP Server'}
         description={server?.description ?? 'MCP server details'}

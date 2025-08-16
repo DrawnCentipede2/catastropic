@@ -2,9 +2,8 @@ import { Link, NavLink } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Flame, User, Settings, Info, LogOut, LogIn, Heart, Sun, Moon, Mail } from "lucide-react";
+import { Flame, User, Settings, Info, LogOut, Github, Heart, Sun, Moon, Mail } from "lucide-react";
 import { useEffect, useState } from "react";
-import { DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/Catastropic_cat_logo.png";
 
@@ -127,20 +126,15 @@ const Header = () => {
               </DropdownMenu>
             </>
           ) : (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  disabled={isLoggingIn}
-                  className="flex items-center gap-2"
-                >
-                  <LogIn className="h-4 w-4" />
-                  {isLoggingIn ? 'Signing in...' : 'Sign in'}
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => login('github')}>Sign in with GitHub</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button
+              disabled={isLoggingIn}
+              className="flex items-center gap-2"
+              onClick={() => login('github')}
+              aria-label="Sign in with GitHub"
+            >
+              <Github className="h-4 w-4" />
+              {isLoggingIn ? 'Signing in...' : 'Sign in'}
+            </Button>
           )}
         </div>
       </nav>
