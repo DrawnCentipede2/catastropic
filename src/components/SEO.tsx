@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import catFavicon from '@/assets/Catastropic_cat_logo.png'
 
 interface SEOProps {
   title: string;
@@ -46,6 +47,22 @@ export const SEO = ({ title, description, jsonLd }: SEOProps) => {
       return l;
     });
     canonical.setAttribute('href', window.location.href);
+
+    // Favicon & app icons
+    const icon = ensureTag('link[rel="icon"]', () => {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'icon');
+      l.setAttribute('type', 'image/png');
+      return l;
+    });
+    icon.setAttribute('href', catFavicon);
+
+    const appleIcon = ensureTag('link[rel="apple-touch-icon"]', () => {
+      const l = document.createElement('link');
+      l.setAttribute('rel', 'apple-touch-icon');
+      return l;
+    });
+    appleIcon.setAttribute('href', catFavicon);
 
     // Structured data
     const jsonId = 'page-jsonld';
